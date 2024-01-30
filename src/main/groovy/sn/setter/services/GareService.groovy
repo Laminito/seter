@@ -28,7 +28,7 @@ class GareService
         }
     }
 
-    def addGare(Gare gare) {
+    public addGare(Gare gare) {
         try {
             if (gare != null) {
                 if (gare.nom == null) {
@@ -59,5 +59,13 @@ class GareService
             log.error("Une erreur est survenue lors de l'ajout d'une nouvelle gare : {}", ex.toString());
             throw new SeterException("Erreur de validation lors de l'ajout d'une nouvelle gare"+ ex.toString());
         }
+    }
+
+    public getGareById(String id) {
+         return garesRepository.findById(id).get()
+    }
+
+    public deleteGare(Gare gare) {
+        garesRepository.save(gare);
     }
 }
