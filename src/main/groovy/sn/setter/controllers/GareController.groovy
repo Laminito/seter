@@ -40,11 +40,13 @@ class GareController
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
-    public Seter getAllGares(){
-        try {
+    public Seter getAllGares()
+    {
+        try
+        {
             List<Gare> gares = gareService.getAllGares();
-            if (gares.isEmpty() || gares == null){
-
+            if (gares.isEmpty() || gares == null)
+            {
                 errorResponse = ResponseFactory.seterResponse(
                         Constantes.Message.NOT_FOUND_BODY,
                         Constantes.Status.NOT_FOUND,
@@ -53,9 +55,7 @@ class GareController
                 );
                 resultMap = new HashMap<>();
                 resultMap.put("result", errorResponse);
-                log.info("gares : {} ",gares)
                 responseDto.setSeter(resultMap);
-                log.error("La liste des gares est vide");
                 return responseDto;
             }
 
@@ -81,64 +81,112 @@ class GareController
 
             resultMap = new HashMap<>();
             resultMap.put("result", successResponse);
-            log.info("La récupération de la liste des gares a été un succès");
             responseDto.setSeter(resultMap);
         }
-        catch (DataAccessException ex) {
+        catch (DataAccessException ex)
+        {
             errorResponse = ResponseFactory.seterResponse(
                     Constantes.Message.BAD_REQUEST_BODY,
                     Constantes.Status.BAD_REQUEST,
-                    "Erreur de base de données lors de la récupération des produits ",
+                    "Erreur de base de données lors de la récupération des gares " + ex.toString(),
                     null
             );
 
             resultMap = new HashMap<>();
             resultMap.put("result", errorResponse);
             responseDto.setSeter(resultMap);
-            log.error("Erreur de base de données lors de la récupération des produits ");
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             errorResponse = ResponseFactory.seterResponse(
                     Constantes.Message.BAD_REQUEST_BODY,
                     Constantes.Status.BAD_REQUEST,
-                    "Une erreur s'est produite lors de la récupération de la liste des gares ",
+                    "Une erreur s'est produite lors de la récupération de la liste des gares : " + ex.toString(),
                     null
             );
 
             resultMap = new HashMap<>();
             resultMap.put("result", errorResponse);
             responseDto.setSeter(resultMap);
-            log.error("Une erreur s'est produite lors de la récupération de la liste des produits : " + ex.toString());
         }
         return responseDto;
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/add")
-    public Seter addGare(@RequestBody Gare gare) {
-        try {
-            if (gare != null) {
-                if (gare.getNom() == null) {
-                    log.error("Le champ nom est requis");
-                    throw new SeterException("Le champ nom est requis");
+    public Seter addGare(@RequestBody Gare gare)
+    {
+        try
+        {
+            if (gare != null)
+            {
+                if (gare.getNom() == null)
+                {
+                    errorResponse = ResponseFactory.seterResponse(
+                            Constantes.Message.BAD_REQUEST_BODY,
+                            Constantes.Status.BAD_REQUEST,
+                            "Le champ nom est requis",
+                            null
+                    );
+                    resultMap = new HashMap<>();
+                    resultMap.put("result", errorResponse);
+                    responseDto.setSeter(resultMap);
+                    return responseDto;
                 }
-                if (gare.getAdresse() == null) {
-                    log.error("Le champ adresse est requis");
-                    throw new SeterException("Le champ adresse est requis");
+                if (gare.getAdresse() == null)
+                {
+                    errorResponse = ResponseFactory.seterResponse(
+                            Constantes.Message.BAD_REQUEST_BODY,
+                            Constantes.Status.BAD_REQUEST,
+                            "Le champ adresse est requis",
+                            null
+                    );
+                    resultMap = new HashMap<>();
+                    resultMap.put("result", errorResponse);
+                    responseDto.setSeter(resultMap);
+                    return responseDto;
                 }
-                if (gare.getLatitude() == 0) {
-                    log.error("Le champ latitude est requis");
-                    throw new SeterException("Le champ latitude est requis");
+                if (gare.getLatitude() == 0)
+                {
+                    errorResponse = ResponseFactory.seterResponse(
+                            Constantes.Message.BAD_REQUEST_BODY,
+                            Constantes.Status.BAD_REQUEST,
+                            "Le champ latitude est requis",
+                            null
+                    );
+                    resultMap = new HashMap<>();
+                    resultMap.put("result", errorResponse);
+                    responseDto.setSeter(resultMap);
+                    return responseDto;
                 }
-                if (gare.getLongitude() == 0) {
-                    log.error("Le champ longitude est requis");
-                    throw new SeterException("Le champ longitude est requis");
+                if (gare.getLongitude() == 0)
+                {
+                    errorResponse = ResponseFactory.seterResponse(
+                            Constantes.Message.BAD_REQUEST_BODY,
+                            Constantes.Status.BAD_REQUEST,
+                            "Le champ longitude est requis",
+                            null
+                    );
+                    resultMap = new HashMap<>();
+                    resultMap.put("result", errorResponse);
+                    responseDto.setSeter(resultMap);
+                    return responseDto;
                 }
-                else {
+                else
+                {
                     Gare addedGare = gareService.addGare(gare);
-                    if(!addedGare){
-                        log.error("L'enregistrement d'une nouvelle gare a échoué");
-                        throw new SeterException("L'enregistrement d'une nouvelle gare a échoué");
+                    if(!addedGare)
+                    {
+                        errorResponse = ResponseFactory.seterResponse(
+                                Constantes.Message.BAD_REQUEST_BODY,
+                                Constantes.Status.BAD_REQUEST,
+                                "L'enregistrement d'une nouvelle gare a échoué.",
+                                null
+                        );
+                        resultMap = new HashMap<>();
+                        resultMap.put("result", errorResponse);
+                        responseDto.setSeter(resultMap);
+                        return responseDto;
                     }
                     GareDto gareDto = new GareDto();
                     gareDto.setId(addedGare.getId());
@@ -148,127 +196,68 @@ class GareController
                     gareDto.setLongitude(addedGare.getLongitude());
                     gareDto.setEnabled(addedGare.getEnabled());
                     gareDto.setCreatedDate(addedGare.getCreatedDate());
+                    gareDto.setLastModifiedDate(addedGare.getLastModifiedDate());
                     successResponse = ResponseFactory.seterResponse(
                             Constantes.Message.SUCCESS_BODY,
                             Constantes.Status.OK,
                             "Enregistrement réussi avec succès",
                             gareDto
                     );
-
                     resultMap = new HashMap<>();
                     resultMap.put("result", successResponse);
                     responseDto.setSeter(resultMap);
-                    return responseDto;
                 }
-            } else {
-                log.error("Échec lors de l'ajout d'une nouvelle gare");
-                throw new SeterException("La gare à ajouter est nulle.");
             }
-        } catch (SeterException setex) {
-            errorResponse = ResponseFactory.seterResponse(
-                    Constantes.Message.BAD_REQUEST_BODY,
-                    Constantes.Status.BAD_REQUEST,
-                    "",
-                    null
-            );
-            resultMap = new HashMap<>();
-            resultMap.put("result", errorResponse);
-            responseDto.setSeter(resultMap);
-            log.error("Une erreur s'est produite lors de l'ajout d'une nouvelle gare: " + setex.toString());
-
-        } catch (Exception ex) {
-            log.error("Une erreur est survenue lors de l'ajout d'une nouvelle gare : {}", ex.toString());
-            errorResponse = ResponseFactory.seterResponse(
-                    Constantes.Message.BAD_REQUEST_BODY,
-                    Constantes.Status.BAD_REQUEST,
-                    "Une erreur s'est produite lors de l'ajout d'une nouvelle gare",
-                    null
-            );
-            resultMap = new HashMap<>();
-            resultMap.put("result", errorResponse);
-            responseDto.setSeter(resultMap);
-            log.error("Une erreur s'est produite lors de l'ajout d'une nouvelle gare " + ex.toString());
-        }
-    }
-
-    @GetMapping("/{uuid2}")
-    public Seter getGare(@PathVariable("uuid2") String uuid2)
-    {
-        try
-        {
-            Gare gare = gareService.getGareById(uuid2);
-            if (gare == null) {
-                // Handle the case where Gare with the given ID is not found
+            else
+            {
                 errorResponse = ResponseFactory.seterResponse(
-                        Constantes.Message.NOT_FOUND_BODY,
-                        Constantes.Status.NOT_FOUND,
-                        "La gare avec l'ID " + uuid2 + " n'a pas été trouvée",
+                        Constantes.Message.BAD_REQUEST_BODY,
+                        Constantes.Status.BAD_REQUEST,
+                        "Échec lors de l'ajout d'une nouvelle gare : La gare à ajouter est nulle.",
                         null
                 );
-
                 resultMap = new HashMap<>();
                 resultMap.put("result", errorResponse);
-                log.error("La gare avec l'ID " + uuid2 + " n'a pas été trouvée");
+                responseDto.setSeter(resultMap);
                 return responseDto;
             }
-
-            GareDto gareDto = new GareDto();
-            gareDto.setId(gare.getId());
-            gareDto.setNom(gare.getNom());
-            gareDto.setAdresse(gare.getAdresse());
-            gareDto.setLatitude(gare.getLatitude());
-            gareDto.setLongitude(gare.getLongitude());
-            gareDto.setEnabled(gare.getEnabled());
-
-            successResponse = ResponseFactory.seterResponse(
-                    Constantes.Message.SUCCESS_BODY,
-                    Constantes.Status.OK,
-                    "La récupération de la gare avec l'ID " + uuid2 + " a été un succès",
-                    Collections.singletonList(gareDto)
-            );
-
-            resultMap = new HashMap<>();
-            resultMap.put("result", successResponse);
-            log.info("La récupération de la gare avec l'ID " + uuid2 + " a été un succès");
-            responseDto.setSeter(resultMap);
         }
-        catch (DataAccessException ex)
+        catch (SeterException ex)
         {
             errorResponse = ResponseFactory.seterResponse(
                     Constantes.Message.BAD_REQUEST_BODY,
                     Constantes.Status.BAD_REQUEST,
-                    "Erreur de base de données lors de la récupération de la gare avec l'ID " + uuid2,
+                    "Une erreur s'est produite lors de l'ajout d'une nouvelle gare: " + ex.toString(),
                     null
             );
             resultMap = new HashMap<>();
             resultMap.put("result", errorResponse);
             responseDto.setSeter(resultMap);
-            log.error("Erreur de base de données lors de la récupération de la gare avec l'ID " + uuid2);
         }
         catch (Exception ex)
         {
             errorResponse = ResponseFactory.seterResponse(
                     Constantes.Message.BAD_REQUEST_BODY,
                     Constantes.Status.BAD_REQUEST,
-                    "Une erreur s'est produite lors de la récupération de la gare avec l'ID " + uuid2 + ": " + ex.toString(),
+                    "Une erreur s'est produite lors de l'ajout d'une nouvelle gare:  " + ex.toString(),
                     null
             );
             resultMap = new HashMap<>();
             resultMap.put("result", errorResponse);
             responseDto.setSeter(resultMap);
-            log.error("Une erreur s'est produite lors de la récupération de la gare avec l'ID " + uuid2 + ": " + ex.toString());
         }
-    return responseDto;
+        return responseDto;
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PatchMapping("/{gareId}")
-    public Seter deleteGare(@PathVariable("gareId") String gareId) {
+    @GetMapping("/{gareId}")
+    public Seter getGare(@PathVariable("gareId") String gareId)
+    {
         try
         {
             Gare gare = gareService.getGareById(gareId);
-
-            if (gare == null) {
+            if (gare == null)
+            {
                 errorResponse = ResponseFactory.seterResponse(
                         Constantes.Message.NOT_FOUND_BODY,
                         Constantes.Status.NOT_FOUND,
@@ -281,20 +270,21 @@ class GareController
                 log.error("La gare avec l'ID " + gareId + " n'a pas été trouvée");
                 return responseDto;
             }
-
-            gare.setEnabled(false);
-            gareService.deleteGare(gare);
-
+            GareDto gareDto = new GareDto();
+            gareDto.setId(gare.getId());
+            gareDto.setNom(gare.getNom());
+            gareDto.setAdresse(gare.getAdresse());
+            gareDto.setLatitude(gare.getLatitude());
+            gareDto.setLongitude(gare.getLongitude());
+            gareDto.setEnabled(gare.getEnabled());
             successResponse = ResponseFactory.seterResponse(
                     Constantes.Message.SUCCESS_BODY,
                     Constantes.Status.OK,
-                    "La suppression de la gare : " + gare.getNom() + " a été un succès",
-                    null
+                    "La récupération de la gare avec l'ID " + gareId + " a été un succès",
+                    Collections.singletonList(gareDto)
             );
-
             resultMap = new HashMap<>();
             resultMap.put("result", successResponse);
-            log.info("La suppression de la gare : " + gare.getNom() + " a été un succès");
             responseDto.setSeter(resultMap);
         }
         catch (DataAccessException ex)
@@ -302,30 +292,85 @@ class GareController
             errorResponse = ResponseFactory.seterResponse(
                     Constantes.Message.BAD_REQUEST_BODY,
                     Constantes.Status.BAD_REQUEST,
-                    "Erreur de base de données lors de la suppression de la gare avec l'ID ",
+                    "Erreur de base de données lors de la récupération de la gare avec l'ID " + gareId + " : " + ex.toString(),
                     null
             );
-
             resultMap = new HashMap<>();
             resultMap.put("result", errorResponse);
             responseDto.setSeter(resultMap);
-            log.error("Erreur de base de données lors de la suppression de la gare avec l'ID ");
         }
         catch (Exception ex)
         {
             errorResponse = ResponseFactory.seterResponse(
                     Constantes.Message.BAD_REQUEST_BODY,
                     Constantes.Status.BAD_REQUEST,
-                    "Une erreur s'est produite lors de la suppression de la gare avec l'ID " + gareId + ": " + ex.toString(),
+                    "Une erreur s'est produite lors de la récupération de la gare avec l'ID " + gareId + " : " + ex.toString(),
+                    null
+            );
+            resultMap = new HashMap<>();
+            resultMap.put("result", errorResponse);
+            responseDto.setSeter(resultMap);
+        }
+        return responseDto;
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PatchMapping("/{gareId}")
+    public Seter deleteGare(@PathVariable("gareId") String gareId)
+    {
+        try
+        {
+            Gare gare = gareService.getGareById(gareId);
+            if (gare == null)
+            {
+                errorResponse = ResponseFactory.seterResponse(
+                        Constantes.Message.NOT_FOUND_BODY,
+                        Constantes.Status.NOT_FOUND,
+                        "La gare avec l'ID " + gareId + " n'a pas été trouvée",
+                        null
+                );
+                resultMap = new HashMap<>();
+                resultMap.put("result", errorResponse);
+                return responseDto;
+            }
+            gare.setEnabled(false);
+            gareService.deleteGare(gare);
+            successResponse = ResponseFactory.seterResponse(
+                    Constantes.Message.SUCCESS_BODY,
+                    Constantes.Status.OK,
+                    "La suppression de la gare : " + gare.getNom() + " a été un succès",
+                    null
+            );
+            resultMap = new HashMap<>();
+            resultMap.put("result", successResponse);
+            responseDto.setSeter(resultMap);
+        }
+        catch (DataAccessException ex)
+        {
+            errorResponse = ResponseFactory.seterResponse(
+                    Constantes.Message.BAD_REQUEST_BODY,
+                    Constantes.Status.BAD_REQUEST,
+                    "Erreur de base de données lors de la suppression de la gare avec l'ID " + gareId + " : " + ex.toString(),
                     null
             );
 
             resultMap = new HashMap<>();
             resultMap.put("result", errorResponse);
             responseDto.setSeter(resultMap);
-            log.error("Une erreur s'est produite lors de la suppression de la gare avec l'ID " + gareId + ": " + ex.toString());
+        }
+        catch (Exception ex)
+        {
+            errorResponse = ResponseFactory.seterResponse(
+                    Constantes.Message.BAD_REQUEST_BODY,
+                    Constantes.Status.BAD_REQUEST,
+                    "Une erreur s'est produite lors de la suppression de la gare avec l'ID " + gareId + " : " + ex.toString(),
+                    null
+            );
+
+            resultMap = new HashMap<>();
+            resultMap.put("result", errorResponse);
+            responseDto.setSeter(resultMap);
         }
         return responseDto;
     }
-
 }

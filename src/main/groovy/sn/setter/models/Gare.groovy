@@ -23,7 +23,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 @NoArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-class Gare {
+class Gare
+{
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
