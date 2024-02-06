@@ -49,7 +49,9 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 }
-
+springBoot {
+    mainClass = 'src/main/groovy/sn/setter/SetterApplication.groovy'
+}
 tasks.named('test') {
     outputs.dir snippetsDir
     useJUnitPlatform()
@@ -58,4 +60,9 @@ tasks.named('test') {
 tasks.named('asciidoctor') {
     inputs.dir snippetsDir
     dependsOn test
+}
+
+jar {
+    archiveFileName = 'setter-0.0.1-SNAPSHOT.jar'
+    // autres configurations si nécessaires
 }
